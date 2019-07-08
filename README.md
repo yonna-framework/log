@@ -7,8 +7,9 @@
 ## Yonna 日志库
 
 ```
-日志包含文件、mongo、mysql三种类型
-其中文件日志core库默认已经包含一部分官方日志
+日志包含file、mongo、mysql三种类型
+其中file日志默认自带core库默认已经包含一部分官方日志
+
 ```
 
 ## 
@@ -21,7 +22,7 @@
 
 > Yonna demo：[GOTO yonna](https://github.com/yonna-framework/yonna)
 
-### Example
+### Log例子/example
 
 ```php
 <?php
@@ -48,5 +49,22 @@
     $log->warning($msg,$data);
     $log->info($msg,$data);
     
+?>
+```
+
+#### 注意，默认是不支持数据库形式的日志，你可以安装ORM包支持它
+```
+composer install yonna/database
+```
+
+#### 除了使用默认的配置，您还可以使用Config进行自定义配置
+```php
+<?php
+
+    use Yonna\Log\Config;
+    
+    // 设置文件的日志目录名
+    Config::setFile('app_log');
+
 ?>
 ```

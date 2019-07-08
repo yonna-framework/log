@@ -10,9 +10,7 @@
     "log"
   ],
   "require": {
-    "ext-json": "*",
-    "ext-pdo": "*",
-    "ext-mongodb": "*"
+    "yonna/foundation": "@dev"
   },
   "autoload": {
     "psr-4": {

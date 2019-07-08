@@ -3,7 +3,6 @@
 namespace Yonna\Log;
 
 
-use RuntimeException;
 use Throwable;
 
 class File
@@ -11,12 +10,51 @@ class File
 
     private $root = null;
 
-    public function __construct(string $root)
+    public function __construct()
     {
-        if (!is_dir($root)) {
-            throw new RuntimeException('error log root path');
+        $this->root = realpath(__DIR__ . '/../../../');
+    }
+
+    /**
+     * 递归删除过期日志
+     * @param $dir
+     * @param integer $timestamp 删除这一天之前的
+     */
+    public static function dirExpire($dir, $timestamp)
+    {
+        if (!is_dir($dir)) {
+            return;
         }
-        $this->root = realpath($root);
+        $files = opendir($dir);
+        while (false !== ($file = readdir($files))) {
+            if ($file != '.' && $file != '..') {
+                $t = strtotime($file);
+                if ($t > $timestamp) {
+                    continue;
+                }
+                $realDir = realpath($dir);
+                $realFile = $realDir . DIRECTORY_SEPARATOR . $file;
+                if (is_dir($realFile)) {
+                    static::dirExpire($realFile, $timestamp);
+                    @rmdir($realFile);
+                } else {
+                    @unlink($realFile);
+                }
+            }
+        }
+        closedir($files);
+        @rmdir($dir);
+    }
+
+    /**
+     * 清楚文件日志
+     */
+    private function clear()
+    {
+        if (Config::getFileExpireDay() <= 0) {
+            return;
+        }
+        $this->dirExpire($this->root . DIRECTORY_SEPARATOR . Config::getFile(), time() - 86400 * Config::getFileExpireDay());
     }
 
     /**
@@ -26,7 +64,7 @@ class File
     private function dir()
     {
         $path = $this->root
-            . DIRECTORY_SEPARATOR . 'applog'
+            . DIRECTORY_SEPARATOR . Config::getFile()
             . DIRECTORY_SEPARATOR . date('Y-m-d');
         $temp = str_replace('\\', '/', $path);
         $p = explode('/', $temp);
@@ -78,6 +116,7 @@ class File
             }
         }
         @file_put_contents($this->dir() . $this->file($type), $append . PHP_EOL, FILE_APPEND);
+        $this->clear();
     }
 
     /**
