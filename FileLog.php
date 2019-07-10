@@ -5,7 +5,7 @@ namespace Yonna\Log;
 
 use Throwable;
 
-class File
+class FileLog
 {
 
     private $root = null;
