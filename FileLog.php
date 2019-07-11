@@ -47,7 +47,7 @@ class FileLog
     }
 
     /**
-     * 清楚文件日志
+     * 清除文件日志
      */
     private function clear()
     {
