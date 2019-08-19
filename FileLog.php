@@ -43,7 +43,6 @@ class FileLog
             }
         }
         closedir($files);
-        @rmdir($dir);
     }
 
     /**
