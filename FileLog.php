@@ -20,7 +20,7 @@ class FileLog
      * @param $dir
      * @param integer $timestamp 删除这一天之前的
      */
-    public static function dirExpire($dir, $timestamp)
+    public function dirExpire($dir, $timestamp)
     {
         if (!is_dir($dir)) {
             return;
@@ -43,6 +43,9 @@ class FileLog
             }
         }
         closedir($files);
+        if ($dir !== $this->root . DIRECTORY_SEPARATOR . Config::getFile()) {
+            @rmdir($dir);
+        }
     }
 
     /**
