@@ -27,13 +27,13 @@
 ```php
 <?php
     
-    use Yonna\Log\File;
+    use Yonna\Log\FileLog;
     
     // 记录日志的「目录」
     // 你可以在scope中的$request->cargo内获取到app的根
     $root = '/your_log_dir';
     
-    $log = (new File($root));
+    $log = (new FileLog($root));
     
     // 记录 Throwable 的日志
     $log->throwable($e);
