@@ -12,7 +12,12 @@ class FileLog
 
     public function __construct()
     {
-        $this->root = realpath(__DIR__ . '/../../../');
+        if (Config::getDir() === null) {
+            trigger_error('Set Dir for FileLog.');
+            return;
+        }
+        $this->root = realpath(Config::getDir());
+        print_r($this->root);
     }
 
     /**
@@ -20,7 +25,7 @@ class FileLog
      * @param $dir
      * @param integer $timestamp 删除这一天之前的
      */
-    public function dirExpire($dir, $timestamp)
+    private function dirExpire($dir, $timestamp)
     {
         if (!is_dir($dir)) {
             return;
@@ -61,13 +66,15 @@ class FileLog
 
     /**
      * 获取日志目录，以天分割
+     * @param $key
      * @return string
      */
-    private function dir()
+    private function dir($key)
     {
         $path = $this->root
             . DIRECTORY_SEPARATOR . Config::getFile()
-            . DIRECTORY_SEPARATOR . date('Y-m-d');
+            . DIRECTORY_SEPARATOR . date('Y-m-d')
+            . DIRECTORY_SEPARATOR . $key;
         $temp = str_replace('\\', '/', $path);
         $p = explode('/', $temp);
         $tempLen = count($p);
@@ -76,7 +83,7 @@ class FileLog
             $temp .= $p[$i] . DIRECTORY_SEPARATOR;
             if (!is_dir($temp)) {
                 @mkdir($temp);
-                @chmod($temp, 0777);
+                @chmod($temp, 0644);
             }
         }
         $temp = realpath($temp) . DIRECTORY_SEPARATOR;
@@ -97,17 +104,15 @@ class FileLog
      * 写入日志
      * @param $type
      * @param array $data
-     * @param string $msg
+     * @param string $key
      */
-    private function append($type, $msg = '', array $data = [])
+    private function append($type, $key, array $data = [])
     {
-        if (empty($msg) && empty($data)) {
+        if (empty($key) or empty($data)) {
             return;
         }
-        $append = 'time:' . date("Y-m-d H:i:s D T") . PHP_EOL;
-        $msg && $append .= 'msg:' . $msg . PHP_EOL;
+        $append = '[time:' . date("Y-m-d H:i:s D T") . ']' . PHP_EOL;
         if ($data) {
-            $append .= 'data:' . PHP_EOL;
             foreach ($data as $k => $v) {
                 if (is_array($v) || is_object($v)) {
                     $v = json_encode($v, JSON_UNESCAPED_UNICODE);
@@ -117,17 +122,19 @@ class FileLog
                 $data && $append .= " #{$k} " . $v . PHP_EOL;
             }
         }
-        @file_put_contents($this->dir() . $this->file($type), $append . PHP_EOL, FILE_APPEND);
+        @file_put_contents($this->dir($key) . $this->file($type), $append . PHP_EOL, FILE_APPEND);
         $this->clear();
     }
 
     /**
+     * @param string $key
      * @param Throwable $t
      */
-    public function throwable(Throwable $t)
+    public function throwable(Throwable $t, $key = 'default')
     {
-        $this->append(Type::THROWABLE, $t->getMessage(), [
+        $this->append(Type::THROWABLE, $key, [
             'code' => $t->getCode(),
+            'message' => $t->getMessage(),
             'file' => $t->getFile(),
             'line' => $t->getLine(),
             'trace' => $t->getTrace(),
@@ -135,30 +142,30 @@ class FileLog
     }
 
     /**
-     * @param $data
-     * @param string $msg
+     * @param array $data
+     * @param string $key
      */
-    public function info($msg = '', array $data = [])
+    public function info(array $data = [], $key = 'default')
     {
-        $this->append(Type::INFO, $msg, $data);
+        $this->append(Type::INFO, $key, $data);
     }
 
     /**
-     * @param $data
-     * @param string $msg
+     * @param array $data
+     * @param string $key
      */
-    public function warning($msg = '', array $data = [])
+    public function warning(array $data = [], $key = 'default')
     {
-        $this->append(Type::WARNING, $msg, $data);
+        $this->append(Type::WARNING, $key, $data);
     }
 
     /**
-     * @param $data
-     * @param string $msg
+     * @param array $data
+     * @param string $key
      */
-    public function error($msg = '', array $data = [])
+    public function error(array $data = [], $key = 'default')
     {
-        $this->append(Type::ERROR, $msg, $data);
+        $this->append(Type::ERROR, $key, $data);
     }
 
 }

@@ -6,6 +6,12 @@ class Config
 {
 
     /**
+     * 日志文件目录
+     * @var string
+     */
+    private static $dir = null;
+
+    /**
      * 日志文件目录名
      * @var string
      */
@@ -15,7 +21,23 @@ class Config
      * 文件日志的过期天数
      * @var int
      */
-    private static $file_expire_day = 0; // day
+    private static $file_expire_day = 0;
+
+    /**
+     * @return string
+     */
+    public static function getDir(): string
+    {
+        return self::$dir;
+    }
+
+    /**
+     * @param string $dir
+     */
+    public static function setDir(string $dir): void
+    {
+        self::$dir = $dir;
+    }
 
     /**
      * @return string
@@ -51,90 +73,22 @@ class Config
 
     //===================================================================
 
-    private static $mongo_host = 'localhost';
-    private static $mongo_port = '27017';
-    private static $mongo_account = '';
-    private static $mongo_password = '';
-    private static $mongo_name = 'log';
+    private static $database = null;
 
     /**
-     * @return string
+     * @return null
      */
-    public static function getMongoHost(): string
+    public static function getDatabase()
     {
-        return self::$mongo_host;
+        return self::$database;
     }
 
     /**
-     * @param string $mongo_host
+     * @param null $database
      */
-    public static function setMongoHost(string $mongo_host): void
+    public static function setDatabase($database): void
     {
-        self::$mongo_host = $mongo_host;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getMongoPort(): string
-    {
-        return self::$mongo_port;
-    }
-
-    /**
-     * @param string $mongo_port
-     */
-    public static function setMongoPort(string $mongo_port): void
-    {
-        self::$mongo_port = $mongo_port;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getMongoAccount(): string
-    {
-        return self::$mongo_account;
-    }
-
-    /**
-     * @param string $mongo_account
-     */
-    public static function setMongoAccount(string $mongo_account): void
-    {
-        self::$mongo_account = $mongo_account;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getMongoPassword(): string
-    {
-        return self::$mongo_password;
-    }
-
-    /**
-     * @param string $mongo_password
-     */
-    public static function setMongoPassword(string $mongo_password): void
-    {
-        self::$mongo_password = $mongo_password;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getMongoName(): string
-    {
-        return self::$mongo_name;
-    }
-
-    /**
-     * @param string $mongo_name
-     */
-    public static function setMongoName(string $mongo_name): void
-    {
-        self::$mongo_name = $mongo_name;
+        self::$database = $database;
     }
 
 }
