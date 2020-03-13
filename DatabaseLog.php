@@ -7,6 +7,7 @@ use Throwable;
 use Yonna\Database\DB;
 use Yonna\Database\Driver\Mongo;
 use Yonna\Database\Driver\Mysql;
+use Yonna\Database\Driver\Pgsql;
 use Yonna\Database\Driver\Type as DBType;
 
 class DatabaseLog
@@ -70,6 +71,16 @@ class DatabaseLog
                         `type` char(255) NOT NULL DEFAULT 'info' COMMENT '类型',
                         `log_time` int NOT NULL COMMENT '时间戳',
                         `data` json COMMENT 'data',
+                        PRIMARY KEY (`id`)
+                    ) ENGINE = INNODB COMMENT 'log by yonna';");
+                $db->table($this->store)->insert($logData);
+            } elseif ($db instanceof Pgsql) {
+                $db->query("CREATE TABLE IF NOT EXISTS `{$this->store}`(
+                        `id` bigserial NOT NULL,
+                        `key` text NOT NULL DEFAULT 'default',
+                        `type` text NOT NULL DEFAULT 'info',
+                        `log_time` integer NOT NULL,
+                        `data` jsonb,
                         PRIMARY KEY (`id`)
                     ) ENGINE = INNODB COMMENT 'log by yonna';");
                 $db->table($this->store)->insert($logData);
