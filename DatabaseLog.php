@@ -63,7 +63,7 @@ class DatabaseLog
             if ($db instanceof Mongo) {
                 $db->collection('log_yonna_' . $key)->insert($logData);
             } elseif ($db instanceof Mysql) {
-                $db->query("CREATE TABLE `log_yonna`(
+                $db->query("CREATE TABLE IF NOT EXISTS `log_yonna`(
                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
                         `key` char(255) NOT NULL DEFAULT 'default' COMMENT 'key',
                         `type` char(255) NOT NULL DEFAULT 'info' COMMENT '类型',
@@ -73,7 +73,7 @@ class DatabaseLog
                     ) ENGINE = INNODB COMMENT 'log by yonna';");
                 $db->table('log_yonna')->insert($logData);
             } else {
-                throw new \Exception('Set Database for DatabaseLog.');
+                throw new \Exception('Set Database for Support Driver.');
             }
         } catch (Throwable $e) {
             Log::file()->throwable($e);
