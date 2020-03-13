@@ -12,6 +12,7 @@ use Yonna\Database\Driver\Type as DBType;
 class DatabaseLog
 {
 
+    private $store = 'yonna_log';
     private $config = null;
 
     /**
@@ -61,9 +62,9 @@ class DatabaseLog
         ];
         try {
             if ($db instanceof Mongo) {
-                $db->collection('log_yonna_' . $key)->insert($logData);
+                $db->collection("{$this->store}_" . $key)->insert($logData);
             } elseif ($db instanceof Mysql) {
-                $db->query("CREATE TABLE IF NOT EXISTS `log_yonna`(
+                $db->query("CREATE TABLE IF NOT EXISTS `{$this->store}`(
                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
                         `key` char(255) NOT NULL DEFAULT 'default' COMMENT 'key',
                         `type` char(255) NOT NULL DEFAULT 'info' COMMENT '类型',
@@ -71,7 +72,7 @@ class DatabaseLog
                         `data` json COMMENT 'data',
                         PRIMARY KEY (`id`)
                     ) ENGINE = INNODB COMMENT 'log by yonna';");
-                $db->table('log_yonna')->insert($logData);
+                $db->table($this->store)->insert($logData);
             } else {
                 throw new \Exception('Set Database for Support Driver.');
             }
