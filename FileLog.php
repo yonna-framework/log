@@ -17,7 +17,6 @@ class FileLog
             return;
         }
         $this->root = realpath(Config::getDir());
-        print_r($this->root);
     }
 
     /**

@@ -10,7 +10,8 @@
     "log"
   ],
   "require": {
-    "yonna/foundation": "@dev"
+    "yonna/foundation": "@dev",
+    "yonna/database": "@dev"
   },
   "autoload": {
     "psr-4": {

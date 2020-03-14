@@ -15,7 +15,7 @@ class Config
      * 日志文件目录名
      * @var string
      */
-    private static $file = 'applog';
+    private static $file = 'yonna_log';
 
     /**
      * 文件日志的过期天数
