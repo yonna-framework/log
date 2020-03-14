@@ -98,8 +98,7 @@ class DatabaseLog
      * @param string $key
      * @param Throwable $t
      */
-    public
-    function throwable(Throwable $t, $key = 'default')
+    public function throwable(Throwable $t, $key = 'default')
     {
         $this->append(Type::THROWABLE, $key, [
             'code' => $t->getCode(),
@@ -114,8 +113,7 @@ class DatabaseLog
      * @param array $data
      * @param string $key
      */
-    public
-    function info(array $data = [], $key = 'default')
+    public function info(array $data = [], $key = 'default')
     {
         $this->append(Type::INFO, $key, $data);
     }
@@ -124,8 +122,7 @@ class DatabaseLog
      * @param array $data
      * @param string $key
      */
-    public
-    function warning(array $data = [], $key = 'default')
+    public function warning(array $data = [], $key = 'default')
     {
         $this->append(Type::WARNING, $key, $data);
     }
@@ -134,8 +131,7 @@ class DatabaseLog
      * @param array $data
      * @param string $key
      */
-    public
-    function error(array $data = [], $key = 'default')
+    public function error(array $data = [], $key = 'default')
     {
         $this->append(Type::ERROR, $key, $data);
     }
