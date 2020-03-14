@@ -83,7 +83,7 @@ class DatabaseLog
                         `data` jsonb,
                         PRIMARY KEY (`id`)
                     ) ENGINE = INNODB COMMENT 'log by yonna';");
-                $db->table($this->store)->insert($logData);
+                $db->schemas('public')->table($this->store)->insert($logData);
             } else {
                 throw new \Exception('Set Database for Support Driver.');
             }
