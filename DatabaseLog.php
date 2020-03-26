@@ -3,12 +3,12 @@
 namespace Yonna\Log;
 
 
+use Exception;
 use Throwable;
 use Yonna\Database\DB;
 use Yonna\Database\Driver\Mongo;
 use Yonna\Database\Driver\Mysql;
 use Yonna\Database\Driver\Pgsql;
-use Yonna\Database\Driver\Type as DBType;
 
 class DatabaseLog
 {
@@ -41,6 +41,46 @@ class DatabaseLog
         if (Config::getFileExpireDay() <= 0) {
             return;
         }
+    }
+
+    /**
+     * 分页获得数据
+     * @param int $current
+     * @param int $per
+     * @param array $filter
+     * @return array
+     */
+    public function page($current = 0, $per = 50, $filter = [])
+    {
+        $res = [];
+        try {
+            $db = DB::connect($this->config);
+            if ($db instanceof Mongo) {
+                $obj = $db->collection("{$this->store}");
+            } elseif ($db instanceof Mysql) {
+                $obj = $db->table($this->store);
+            } elseif ($db instanceof Pgsql) {
+                $obj = $db->schemas('public')->table($this->store);
+            } else {
+                throw new Exception('Set Database for Support Driver.');
+            }
+            if (!empty($filter['key'])) {
+                $obj = $obj->equalTo('key', $filter['key']);
+            }
+            if (!empty($filter['type'])) {
+                $obj = $obj->equalTo('type', $filter['key']);
+            }
+            if (!empty($filter['start'])) {
+                $obj = $obj->greaterThanOrEqualTo('log_time', $filter['start']);
+            }
+            if (!empty($filter['end'])) {
+                $obj = $obj->lessThanOrEqualTo('log_time', $filter['end']);
+            }
+            $res = $obj->page($current, $per);
+        } catch (Throwable $e) {
+            Log::file()->throwable($e, 'log_db');
+        }
+        return $res;
     }
 
     /**
@@ -85,7 +125,7 @@ class DatabaseLog
                     ) ENGINE = INNODB COMMENT 'log by yonna';");
                 $db->schemas('public')->table($this->store)->insert($logData);
             } else {
-                throw new \Exception('Set Database for Support Driver.');
+                throw new Exception('Set Database for Support Driver.');
             }
         } catch (Throwable $e) {
             Log::file()->throwable($e);
