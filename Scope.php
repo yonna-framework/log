@@ -15,8 +15,8 @@ class Scope
         $new_arr = [];
         foreach ($file_arr as $f) {
             if ($f != ".." && $f != ".") {
-                if (is_dir($dir . "/" . $f)) {
-                    $new_arr[$f] = self::myScanDir($dir . "/" . $f);
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $f)) {
+                    $new_arr[$f] = self::myScanDir($dir . DIRECTORY_SEPARATOR . $f);
                 } else {
                     $new_arr[] = $f;
                 }
