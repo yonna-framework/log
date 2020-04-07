@@ -16,9 +16,14 @@ class Scope
         foreach ($file_arr as $f) {
             if ($f != ".." && $f != ".") {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $f)) {
-                    $new_arr[$f] = self::myScanDir($dir . DIRECTORY_SEPARATOR . $f);
+                    array_unshift($new_arr, [
+                        'path' => $f,
+                        'children' => self::myScanDir($dir . DIRECTORY_SEPARATOR . $f)
+                    ]);
                 } else {
-                    $new_arr[] = $f;
+                    $new_arr[] = [
+                        'path' => $f,
+                    ];
                 }
             }
         }
@@ -38,9 +43,11 @@ class Scope
                 if (!is_file($file)) {
                     return '';
                 }
-                return file_get_contents($file);
+                $content = file_get_contents($file);
+                $content = str_replace(["\r\n", "\r", "\n", "\t"], '<br/>', $content);
+                return $content;
             });
-            Config::post('page', function (Request $request) {
+            Config::post('db', function (Request $request) {
                 $input = $request->getInput();
                 return Log::db()->page(
                     $input['current'] ?? 1,
