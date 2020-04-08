@@ -56,7 +56,7 @@ class Scope
                         'unique_key' => $input['unique_key'] ?? null,
                         'source' => $input['source'] ?? null
                     ],
-                    );
+                );
             });
         });
     }
