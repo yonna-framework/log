@@ -52,7 +52,10 @@ class Scope
                 return Log::db()->page(
                     $input['current'] ?? 1,
                     $input['per'] ?? 10,
-                    ['unique_key' => $input['unique_key'] ?? null],
+                    [
+                        'key' => $input['key'] ?? null,
+                        'type' => $input['type'] ?? null,
+                    ],
                     );
             });
         });
