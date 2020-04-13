@@ -76,7 +76,7 @@ class DatabaseLog
             if (!empty($filter['end'])) {
                 $obj = $obj->lessThanOrEqualTo('log_time', $filter['end']);
             }
-            $res = $obj->page($current, $per);
+            $res = $obj->orderBy('log_time', 'desc')->page($current, $per);
         } catch (Throwable $e) {
             Log::file()->throwable($e, 'log_db');
         }
@@ -103,7 +103,7 @@ class DatabaseLog
         ];
         try {
             if ($db instanceof Mongo) {
-                $db->collection("{$this->store}_" . $key)->insert($logData);
+                $db->collection($this->store)->insert($logData);
             } elseif ($db instanceof Mysql) {
                 $db->query("CREATE TABLE IF NOT EXISTS `{$this->store}`(
                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
