@@ -45,13 +45,13 @@ class DatabaseLog
 
     /**
      * 分页获得数据
-     * @param int $current
-     * @param int $per
-     * @param array $filter
+     * @param array $options
      * @return array
      */
-    public function page($current = 1, $per = 10, $filter = [])
+    public function page($options = [])
     {
+        $current = $options['current'] ?? 1;
+        $per = $options['per'] ?? 10;
         $res = [];
         try {
             $db = DB::connect($this->config);
@@ -64,19 +64,17 @@ class DatabaseLog
             } else {
                 throw new Exception('Set Database for Support Driver.');
             }
-            if (!empty($filter['key'])) {
-                $obj = $obj->equalTo('key', $filter['key']);
+            $obj = $obj->orderBy('log_time', 'desc');
+            if (!empty($options['key'])) {
+                $obj = $obj->equalTo('key', $options['key']);
             }
-            if (!empty($filter['type'])) {
-                $obj = $obj->equalTo('type', $filter['key']);
+            if (!empty($options['type'])) {
+                $obj = $obj->equalTo('type', $options['key']);
             }
-            if (!empty($filter['start'])) {
-                $obj = $obj->greaterThanOrEqualTo('log_time', $filter['start']);
+            if (!empty($options['log_time'])) {
+                $obj = $obj->between('log_time', $options['log_time']);
             }
-            if (!empty($filter['end'])) {
-                $obj = $obj->lessThanOrEqualTo('log_time', $filter['end']);
-            }
-            $res = $obj->orderBy('log_time', 'desc')->page($current, $per);
+            $res = $obj->page($current, $per);
         } catch (Throwable $e) {
             Log::file()->throwable($e, 'log_db');
         }

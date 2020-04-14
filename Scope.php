@@ -49,14 +49,7 @@ class Scope
             });
             Config::post('db', function (Request $request) {
                 $input = $request->getInput();
-                return Log::db()->page(
-                    $input['current'] ?? 1,
-                    $input['per'] ?? 10,
-                    [
-                        'key' => $input['key'] ?? null,
-                        'type' => $input['type'] ?? null,
-                    ],
-                    );
+                return Log::db()->page($input);
             });
         });
     }
