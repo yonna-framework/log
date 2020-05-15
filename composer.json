@@ -1,6 +1,6 @@
 {
   "name": "yonna/log",
-  "description": "Yonna 事件",
+  "description": "Yonna 日志",
   "license": "MIT",
   "type": "library",
   "keywords": [
